@@ -44,8 +44,8 @@ project "puppet-agent" do |proj|
 
   if platform.is_windows?
     proj.setting(:gem_home, platform.convert_to_windows_path(File.join(proj.libdir, "ruby", "gems", "2.1.0")))
-    proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
-    proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
+    proj.setting(:host_ruby, platform.convert_to_windows_path(File.join(proj.bindir, "ruby.exe")))
+    proj.setting(:host_gem, platform.convert_to_windows_path(File.join(proj.bindir, "gem.bat")))
   else
     proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
