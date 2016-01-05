@@ -24,8 +24,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas'
-  pkg.build_requires "openssl"
+  pkg.build_requires 'augeas' unless platform.is_windows?
 
   pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
 
@@ -55,6 +54,12 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "runtime"
+  elsif platform.is_windows?
+    pkg.build_requires "cmake"
+    pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
@@ -117,12 +122,18 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_linux?
+  if platform.is_linux? || platform.is_windows?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+
+  prefix = settings[:prefix]
+  bindir = settings[:bindir]
+  ruby_vendordir = settings[:ruby_vendordir]
+  libdir = settings[:libdir]
+  make = platform[:make]
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -139,6 +150,26 @@ component "facter" do |pkg, settings, platform|
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+  elsif platform.is_windows?
+    arch = platform.architecture == "x64" ? "64" : "32"
+    make = "#{platform.drive_root}/tools/mingw#{arch}/bin/mingw32-make"
+    prefix = platform.convert_to_windows_path(settings[:prefix])
+
+    pkg.environment "MAKE" => platform.convert_to_windows_path(make)
+    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:#{settings[:tools_root]}/bin:#{settings[:bindir]}:#{platform.drive_root}/Windows/system32:#{platform.drive_root}/Windows:#{platform.drive_root}/Windows/System32/Wbem:#{platform.drive_root}/Windows/System32/WindowsPowerShell/v1.0:#{platform.drive_root}/pstools"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "CC" => settings[:cc]
+    pkg.environment "CXX" => settings[:cxx]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS" => settings[:cflags]
+
+    cmake = "#{platform.drive_root}/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{platform.convert_to_windows_path(settings[:tools_root])}/pl-build-toolchain.cmake"
+
+    prefix = platform.convert_to_windows_path(settings[:prefix])
+    bindir = platform.convert_to_windows_path(settings[:bindir])
+    ruby_vendordir = platform.convert_to_windows_path(settings[:ruby_vendordir])
+    libdir = platform.convert_to_windows_path(settings[:libdir])
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -148,14 +179,14 @@ component "facter" do |pkg, settings, platform|
     ["#{cmake} \
         #{toolchain} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
-        -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-        -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+        -DCMAKE_PREFIX_PATH=#{prefix} \
+        -DCMAKE_INSTALL_PREFIX=#{prefix} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
-        -DFACTER_PATH=#{settings[:bindir]} \
-        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
-        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+        -DFACTER_PATH=#{bindir} \
+        -DRUBY_LIB_INSTALL=#{ruby_vendordir} \
+        -DFACTER_RUBY=#{libdir}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -168,24 +199,28 @@ component "facter" do |pkg, settings, platform|
   if platform.architecture == 'sparc' || platform.is_aix?
     test = ":"
   else
-    test = "#{platform[:make]} test ARGS=-V"
+    test = "#{make} test ARGS=-V"
   end
 
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
     [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
       test
     ]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+  #pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
-  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
-  pkg.directory File.join('/opt/puppetlabs', 'facter')
-  pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], "facter", "facts.d")
+  else
+    pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
+    pkg.directory File.join('/opt/puppetlabs', 'facter')
+    pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
+  end
 end
