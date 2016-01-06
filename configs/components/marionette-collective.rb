@@ -65,12 +65,37 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
+  when "windows"
+    puts "Service files not enabled on windows"
   else
     fail "need to know where to put service files"
   end
 
-  pkg.install do
-    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]} --plugindir=#{File.join('/opt/puppetlabs', 'mcollective', 'plugins')}"]
+  ruby = File.join(settings[:bindir], 'ruby')
+  bindir = settings[:bindir]
+  configdir = File.join(settings[:sysconfdir], 'mcollective')
+  sitelibdir = settings[:ruby_vendordir]
+  plugindir = File.join('/opt/puppetlabs', 'mcollective', 'plugins')
+
+  if platform.is_windows?
+    ruby = platform.convert_to_windows_path(File.join(settings[:bindir], 'ruby'))
+    bindir = platform.convert_to_windows_path(settings[:bindir])
+    configdir = platform.convert_to_windows_path(File.join(settings[:sysconfdir], 'mcollective'))
+    sitelibdir = platform.convert_to_windows_path(settings[:ruby_vendordir])
+    plugindir = platform.convert_to_windows_path(File.join(configdir, 'plugins'))
+  end
+
+  if platform.is_windows?
+    pkg.install do
+      [
+        "cp -r * #{settings[:prefix]}",
+        "cp -r ext/windows/* #{settings[:bindir]}/"
+      ]
+    end
+  else
+    pkg.install do
+      ["#{settings[:host_ruby]} install.rb --ruby=#{ruby} --bindir=#{bindir} --configdir=#{configdir} --sitelibdir=#{sitelibdir} --quick --sbindir=#{bindir} --plugindir=#{plugindir}"]
+    end
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
@@ -86,5 +111,5 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
-  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
+  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
 end
