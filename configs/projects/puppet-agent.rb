@@ -42,6 +42,8 @@ project "puppet-agent" do |proj|
 
   if platform.is_windows?
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
+    proj.setting(:rubyw, File.join(proj.bindir, "rubyw.exe"))
+    proj.setting(:nssm, File.join(proj.bindir, "nssm.exe"))
     proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
   else
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
@@ -118,6 +120,12 @@ project "puppet-agent" do |proj|
   end
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
+  end
+
+  # WIX settings
+  if platform.is_windows?
+    proj.setting(:bindir_id, "bindir")
+    proj.setting(:win64, platform.architecture == "x64" ? "yes" : "no")
   end
 
   # First our stuff
