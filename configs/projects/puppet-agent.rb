@@ -100,6 +100,36 @@ project "puppet-agent" do |proj|
     proj.identifier "com.puppetlabs"
   end
 
+  # WIX settings
+  if platform.is_windows?
+    proj.setting(:company_name, "Puppet Labs")
+    proj.setting(:company_word, "PuppetLabs")
+    proj.setting(:common_product_name, "PuppetInstaller")
+    proj.setting(:upgrade_code, "2AD3D11C-61B3-4710-B106-B4FDEC5FA358")
+    proj.setting(:base_directory, "ProgramFilesFolder")
+    if platform.architecture == "x64"
+      proj.setting(:product_name, "Puppet Agent (64-bit)")
+      proj.setting(:win64, "yes")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir64")
+    else
+      proj.setting(:product_name, "Puppet Agent")
+      proj.setting(:win64, "no")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir")
+    end
+    proj.setting(:product_word, "Puppet")
+    proj.setting(:links, {
+        :HelpLink => "http://links.puppetlabs.com/customer-support-foss",
+        :CommunityLink => "http://links.puppetlabs.com/windows-installer-starting-out",
+        :ForgeLink => "http://links.puppetlabs.com/forge-windows",
+        :NextStepLink => "http://links.puppetlabs.com/windows-installer-next-steps-foss",
+        :ManualLink => "http://links.puppetlabs.com/windows-manual-foss",
+      })
+    proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
+
+    # Directory IDs
+    proj.setting(:bindir_id, "bindir")
+  end
+
   # For some platforms the default doc location for the BOM does not exist or is incorrect - move it to specified directory
   if platform.name =~ /cisco-wrlinux/
     proj.bill_of_materials File.join(proj.datadir, "doc")
@@ -120,12 +150,6 @@ project "puppet-agent" do |proj|
   end
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
-  end
-
-  # WIX settings
-  if platform.is_windows?
-    proj.setting(:bindir_id, "bindir")
-    proj.setting(:win64, platform.architecture == "x64" ? "yes" : "no")
   end
 
   # First our stuff
