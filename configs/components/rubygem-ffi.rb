@@ -4,10 +4,10 @@ component "rubygem-ffi" do |pkg, settings, platform|
   if platform.is_windows?
     if platform.architecture == "x64"
       pkg.md5sum "e3ba1afc17b47ad261bf290b31ce46d7"
-      pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x64-mingw32.gem"
+      #pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x64-mingw32.gem"
     else
       pkg.md5sum "e83fb2971a03e52ab3b00e8662ac20ea"
-      pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x86-mingw32.gem"
+      #pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x86-mingw32.gem"
     end
 
     pkg.build_requires "ruby"
@@ -22,8 +22,8 @@ component "rubygem-ffi" do |pkg, settings, platform|
     # will fail by blowing out the stack.
     pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
-    pkg.install do
-      ["#{settings[:gem_install]} ffi-#{pkg.get_version}-#{platform.architecture}-mingw32.gem"]
-    end
+    #pkg.install do
+    #  ["#{settings[:gem_install]} ffi-#{pkg.get_version}-#{platform.architecture}-mingw32.gem"]
+    #end
   end
 end

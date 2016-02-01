@@ -1,5 +1,5 @@
 component "cpp-pcp-client" do |pkg, settings, platform|
-  pkg.load_from_json('configs/components/cpp-pcp-client.json')
+  #pkg.load_from_json('configs/components/cpp-pcp-client.json')
 
   cmake = "/opt/pl-build-tools/bin/cmake"
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
@@ -28,9 +28,9 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
   elsif platform.is_windows?
-    pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
-    pkg.build_requires "pl-boost-#{platform.architecture}"
+    #pkg.build_requires "cmake"
+    #pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    #pkg.build_requires "pl-boost-#{platform.architecture}"
 
     make = "#{settings[:gcc_root]}/bin/mingw32-make"
     pkg.environment "CYGWIN" => settings[:cygwin]
@@ -43,25 +43,25 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     pkg.build_requires "pl-boost"
   end
 
-  pkg.configure do
-    [
-      "#{cmake} \
-      #{toolchain} \
-      #{platform_flags} \
-          -DCMAKE_VERBOSE_MAKEFILE=ON \
-          -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-          -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
-          -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
-          -DBOOST_STATIC=ON \
-          ."
-    ]
-  end
+  #pkg.configure do
+  #  [
+  #    "#{cmake} \
+  #    #{toolchain} \
+  #    #{platform_flags} \
+  #        -DCMAKE_VERBOSE_MAKEFILE=ON \
+  #        -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
+  #        -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+  #        -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
+  #        -DBOOST_STATIC=ON \
+  #        ."
+  #  ]
+  #end
 
-  pkg.build do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
-  end
+  #pkg.build do
+  #  ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+  #end
 
-  pkg.install do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
-  end
+  #pkg.install do
+  #  ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+  #end
 end

@@ -1,7 +1,7 @@
 component "rubygem-minitar" do |pkg, settings, platform|
   pkg.version "0.5.4"
   pkg.md5sum "f5bd734fb3eda7b979d1485ba48fc0ea"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/minitar-#{pkg.get_version}.gem"
+  #pkg.url "http://buildsources.delivery.puppetlabs.net/minitar-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -15,7 +15,7 @@ component "rubygem-minitar" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
-  pkg.install do
-    ["#{settings[:gem_install]} minitar-#{pkg.get_version}.gem"]
-  end
+  #pkg.install do
+  #  ["#{settings[:gem_install]} minitar-#{pkg.get_version}.gem"]
+  #end
 end

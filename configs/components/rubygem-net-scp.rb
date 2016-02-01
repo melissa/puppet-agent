@@ -10,7 +10,7 @@ component "rubygem-net-scp" do |pkg, settings, platform|
   # Instead we use the host gem installation and override GEM_HOME. Yay?
   pkg.environment "GEM_HOME" => settings[:gem_home]
 
-  pkg.install do
-    ["#{settings[:gem_install]} net-scp-#{pkg.get_version}.gem"]
-  end
+  #pkg.install do
+  #  ["#{settings[:gem_install]} net-scp-#{pkg.get_version}.gem"]
+  #end
 end

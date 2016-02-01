@@ -1,5 +1,5 @@
 component "puppet" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/puppet.json")
+  #pkg.load_from_json("configs/components/puppet.json")
 
   pkg.build_requires "ruby"
   pkg.build_requires "facter"
@@ -177,38 +177,42 @@ component "puppet" do |pkg, settings, platform|
     pkg.environment "FACTERDIR" => settings[:prefix]
   end
 
+  #pkg.install do
+  #  [
+  #    "#{settings[:host_ruby]} install.rb \
+  #      --ruby=#{File.join(settings[:bindir], 'ruby')} \
+  #      --check-prereqs \
+  #      --bindir=#{settings[:bindir]} \
+  #      --configdir=#{settings[:puppet_configdir]} \
+  #      --sitelibdir=#{settings[:ruby_vendordir]} \
+  #      --codedir=#{settings[:puppet_codedir]} \
+  #      --vardir=#{File.join(settings[:prefix], 'cache')} \
+  #      --rundir=#{settings[:piddir]} \
+  #      --logdir=#{settings[:logdir]} \
+  #      --configs \
+  #      --quick \
+  #      --man \
+  #      --mandir=#{settings[:mandir]}"
+  #  ]
+  #end
+  pkg.add_source "file://resources/puppet-agent-1.3.2.388.g40d3654.tar.gz", sum: "05461f2ee2167d3b515d5f10af649ee8"
   pkg.install do
-    [
-      "#{settings[:host_ruby]} install.rb \
-        --ruby=#{File.join(settings[:bindir], 'ruby')} \
-        --check-prereqs \
-        --bindir=#{settings[:bindir]} \
-        --configdir=#{settings[:puppet_configdir]} \
-        --sitelibdir=#{settings[:ruby_vendordir]} \
-        --codedir=#{settings[:puppet_codedir]} \
-        --vardir=#{File.join(settings[:prefix], 'cache')} \
-        --rundir=#{settings[:piddir]} \
-        --logdir=#{settings[:logdir]} \
-        --configs \
-        --quick \
-        --man \
-        --mandir=#{settings[:mandir]}"
-    ]
+    ["gunzip -c puppet-agent-1.3.2.388.g40d3654.tar.gz | tar -C /cygdrive/c --strip-components 1 -xf -"]
   end
 
   #The following will add the vim syntax files for puppet
   #in the /opt/puppetlabs/puppet/share/vim directory
-  pkg.add_source "file://resources/files/ftdetect/ftdetect_puppet.vim", sum: "9e93cd63787de6b9ed458c95061f06eb"
-  pkg.add_source "file://resources/files/ftplugin/ftplugin_puppet.vim", sum: "0fde61360edf2bb205947f768bfb2d57"
-  pkg.add_source "file://resources/files/indent/indent_puppet.vim", sum: "4bc2dee4c9c4e74aa3103339ad3ab227"
-  pkg.add_source "file://resources/files/syntax/syntax_puppet.vim", sum: "3ef904628c734af25fe673638c4e0b3d"
+  #pkg.add_source "file://resources/files/ftdetect/ftdetect_puppet.vim", sum: "9e93cd63787de6b9ed458c95061f06eb"
+  #pkg.add_source "file://resources/files/ftplugin/ftplugin_puppet.vim", sum: "0fde61360edf2bb205947f768bfb2d57"
+  #pkg.add_source "file://resources/files/indent/indent_puppet.vim", sum: "4bc2dee4c9c4e74aa3103339ad3ab227"
+  #pkg.add_source "file://resources/files/syntax/syntax_puppet.vim", sum: "3ef904628c734af25fe673638c4e0b3d"
 
-  pkg.install_configfile("../ftdetect_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/ftdetect/puppet.vim")
-  pkg.install_configfile("../ftplugin_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/ftplugin/puppet.vim")
-  pkg.install_configfile("../indent_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/indent/puppet.vim")
-  pkg.install_configfile("../syntax_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/syntax/puppet.vim")
+  #pkg.install_configfile("../ftdetect_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/ftdetect/puppet.vim")
+  #pkg.install_configfile("../ftplugin_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/ftplugin/puppet.vim")
+  #pkg.install_configfile("../indent_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/indent/puppet.vim")
+  #pkg.install_configfile("../syntax_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/syntax/puppet.vim")
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+  #pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   pkg.configfile File.join(settings[:puppet_configdir], 'puppet.conf')
   pkg.configfile File.join(settings[:puppet_configdir], 'auth.conf')
@@ -222,7 +226,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
-  pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
+  #pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
   pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
 
   pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?

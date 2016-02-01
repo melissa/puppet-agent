@@ -1,7 +1,7 @@
 component "ruby" do |pkg, settings, platform|
   pkg.version "2.1.8"
   pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
+  #pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
   pkg.replaces 'pe-ruby-mysql'
@@ -12,7 +12,7 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-rubygem-gem2rpm'
 
   base = 'resources/patches/ruby'
-  pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
+  #pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -71,12 +71,12 @@ component "ruby" do |pkg, settings, platform|
     special_flags = "--build=#{settings[:platform_triple]}"
   end
 
-  if platform.is_windows?
-    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
-    pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
-    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
-    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
-  end
+  #if platform.is_windows?
+  #  pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
+  #  pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
+  #  pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
+  #  pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+  #end
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris? || platform.is_aix?
@@ -92,7 +92,7 @@ component "ruby" do |pkg, settings, platform|
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
   elsif platform.is_windows?
-    pkg.build_requires "pl-zlib-#{platform.architecture}"
+    #pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
   if platform.is_solaris?
@@ -114,10 +114,10 @@ component "ruby" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.build_requires "pl-gdbm-#{platform.architecture}"
-    pkg.build_requires "pl-iconv-#{platform.architecture}"
-    pkg.build_requires "pl-libffi-#{platform.architecture}"
-    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
+    #pkg.build_requires "pl-gdbm-#{platform.architecture}"
+    #pkg.build_requires "pl-iconv-#{platform.architecture}"
+    #pkg.build_requires "pl-libffi-#{platform.architecture}"
+    #pkg.build_requires "pl-pdcurses-#{platform.architecture}"
 
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
@@ -128,27 +128,27 @@ component "ruby" do |pkg, settings, platform|
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available
-  pkg.configure do
-    [
-      "bash configure \
-        --prefix=#{settings[:prefix]} \
-        --with-opt-dir=#{settings[:prefix]} \
-        --enable-shared \
-        --enable-bundled-libyaml \
-        --disable-install-doc \
-        --disable-install-rdoc \
-        #{settings[:host]} \
-        #{special_flags}"
-     ]
-  end
+  #pkg.configure do
+  #  [
+  #    "bash configure \
+  #      --prefix=#{settings[:prefix]} \
+  #      --with-opt-dir=#{settings[:prefix]} \
+  #      --enable-shared \
+  #      --enable-bundled-libyaml \
+  #      --disable-install-doc \
+  #      --disable-install-rdoc \
+  #      #{settings[:host]} \
+  #      #{special_flags}"
+  #   ]
+  #end
 
-  pkg.build do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
-  end
+  #pkg.build do
+  #  "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
+  #end
 
-  pkg.install do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
-  end
+  #pkg.install do
+  #  "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
+  #end
 
   if platform.is_solaris? || platform.is_aix?
     # Here we replace the rbconfig from our ruby compiled with our toolchain

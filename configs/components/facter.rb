@@ -1,5 +1,5 @@
 component "facter" do |pkg, settings, platform|
-  pkg.load_from_json('configs/components/facter.json')
+  #pkg.load_from_json('configs/components/facter.json')
 
   if platform.is_rpm?
     # In our rpm packages, facter has an epoch set, so we need to account for that here
@@ -56,10 +56,10 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "runtime"
   elsif platform.is_windows?
-    pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
-    pkg.build_requires "pl-boost-#{platform.architecture}"
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+    #pkg.build_requires "cmake"
+    #pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    #pkg.build_requires "pl-boost-#{platform.architecture}"
+    #pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
@@ -157,24 +157,24 @@ component "facter" do |pkg, settings, platform|
     cmake = "/opt/pl-build-tools/bin/cmake"
   end
 
-  pkg.configure do
-    ["#{cmake} \
-        #{toolchain} \
-        -DCMAKE_VERBOSE_MAKEFILE=ON \
-        -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-        -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
-        #{special_flags} \
-        -DBOOST_STATIC=ON \
-        -DYAMLCPP_STATIC=ON \
-        -DFACTER_PATH=#{settings[:bindir]} \
-        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
-        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-        -DWITHOUT_CURL=#{skip_curl} \
-        -DWITHOUT_BLKID=#{skip_blkid} \
-        -DWITHOUT_JRUBY=#{skip_jruby} \
-        #{java_includedir} \
-        ."]
-  end
+  #pkg.configure do
+  #  ["#{cmake} \
+  #      #{toolchain} \
+  #      -DCMAKE_VERBOSE_MAKEFILE=ON \
+  #      -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
+  #      -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+  #      #{special_flags} \
+  #      -DBOOST_STATIC=ON \
+  #      -DYAMLCPP_STATIC=ON \
+  #      -DFACTER_PATH=#{settings[:bindir]} \
+  #      -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
+  #      -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+  #      -DWITHOUT_CURL=#{skip_curl} \
+  #      -DWITHOUT_BLKID=#{skip_blkid} \
+  #      -DWITHOUT_JRUBY=#{skip_jruby} \
+  #      #{java_includedir} \
+  #      ."]
+  #end
 
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
@@ -184,19 +184,19 @@ component "facter" do |pkg, settings, platform|
     test = "#{make} test ARGS=-V"
   end
 
-  pkg.build do
-    # Until a `check` target exists, run tests are part of the build.
-    [
-      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
-      test
-    ]
-  end
+  #pkg.build do
+  #  # Until a `check` target exists, run tests are part of the build.
+  #  [
+  #    "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+  #    test
+  #  ]
+  #end
 
-  pkg.install do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
-  end
+  #pkg.install do
+  #  ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+  #end
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+  #pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
   pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')

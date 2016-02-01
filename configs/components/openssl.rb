@@ -18,10 +18,10 @@ component "openssl" do |pkg, settings, platform|
     #   * tar -czf openssl-windows.tar.gz openssl-windows
     # Please don't hate me, this was the best solution I could come up with :(
     pkg.md5sum "74c599905f9929f6b42658fe0f396393"
-    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}-windows.tar.gz"
+    #pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}-windows.tar.gz"
   else
     pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
-    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+    #pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
   end
 
   pkg.replaces 'pe-openssl'
@@ -50,13 +50,13 @@ component "openssl" do |pkg, settings, platform|
   elsif platform.is_osx?
     pkg.build_requires 'makedepend'
   elsif platform.is_windows?
-    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    #pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     # This patch removes the option `-DOPENSSL_USE_APPLINK` from the mingw openssl congifure target
     # This brings mingw more in line with what is happening with mingw64. All applink does it makes
     # it possible to use the .dll compiled with one compiler with an application compiled with a
     # different compiler. Given our openssl should only be interacting with things that we build,
     # we can ensure everything is build with the same compiler.
-    pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
+    #pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
     pkg.build_requires "runtime"
   end
 
@@ -106,54 +106,54 @@ component "openssl" do |pkg, settings, platform|
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
   end
 
-  pkg.configure do
-    [# OpenSSL Configure doesn't honor CFLAGS or LDFLAGS as environment variables.
-    # Instead, those should be passed to Configure at the end of its options, as
-    # any unrecognized options are passed straight through to ${CC}. Defining
-    # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
-    # since configure uses the existence of a lib64 directory to determine
-    # if it should install its own libs into a multilib dir. Yay OpenSSL!
-    "./Configure \
-      --prefix=#{settings[:prefix]} \
-      --libdir=lib \
-      --openssldir=#{settings[:prefix]}/ssl \
-      shared \
-      no-asm \
-      #{target} \
-      #{sslflags} \
-      no-camellia \
-      enable-seed \
-      enable-tlsext \
-      enable-rfc3779 \
-      enable-cms \
-      no-md2 \
-      no-mdc2 \
-      no-rc5 \
-      no-ec2m \
-      no-gost \
-      no-srp \
-      no-ssl2 \
-      no-ssl3 \
-      #{cflags} \
-      #{ldflags}"]
-  end
+  #pkg.configure do
+  #  [# OpenSSL Configure doesn't honor CFLAGS or LDFLAGS as environment variables.
+  #  # Instead, those should be passed to Configure at the end of its options, as
+  #  # any unrecognized options are passed straight through to ${CC}. Defining
+  #  # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
+  #  # since configure uses the existence of a lib64 directory to determine
+  #  # if it should install its own libs into a multilib dir. Yay OpenSSL!
+  #  "./Configure \
+  #    --prefix=#{settings[:prefix]} \
+  #    --libdir=lib \
+  #    --openssldir=#{settings[:prefix]}/ssl \
+  #    shared \
+  #    no-asm \
+  #    #{target} \
+  #    #{sslflags} \
+  #    no-camellia \
+  #    enable-seed \
+  #    enable-tlsext \
+  #    enable-rfc3779 \
+  #    enable-cms \
+  #    no-md2 \
+  #    no-mdc2 \
+  #    no-rc5 \
+  #    no-ec2m \
+  #    no-gost \
+  #    no-srp \
+  #    no-ssl2 \
+  #    no-ssl3 \
+  #    #{cflags} \
+  #    #{ldflags}"]
+  #end
 
-  pkg.build do
-    ["#{platform[:make]} depend",
-    "#{platform[:make]}"]
-  end
+  #pkg.build do
+  #  ["#{platform[:make]} depend",
+  #  "#{platform[:make]}"]
+  #end
 
-  if platform.is_aix?
-    pkg.install do
-      ["slibclean"]
-    end
-  end
+  #if platform.is_aix?
+  #  pkg.install do
+  #    ["slibclean"]
+  #  end
+  #end
 
-  install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
+  #install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
 
-  pkg.install do
-    ["#{platform[:make]} #{install_prefix} install"]
-  end
+  #pkg.install do
+  #  ["#{platform[:make]} #{install_prefix} install"]
+  #end
 
-  pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
+  #pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
 end

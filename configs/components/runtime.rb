@@ -10,7 +10,7 @@ component "runtime" do |pkg, settings, platform|
     libdir = "/opt/pl-build-tools/lib/gcc/powerpc-ibm-aix#{platform.os_version}.0.0/5.2.0/"
   elsif platform.is_windows?
     # We only need zlib because curl is dynamically linking against zlib
-    pkg.build_requires "pl-zlib-#{platform.architecture}"
+    #pkg.build_requires "pl-zlib-#{platform.architecture}"
   else
     pkg.build_requires "pl-gcc"
   end
@@ -27,14 +27,14 @@ component "runtime" do |pkg, settings, platform|
     pkg.install_file File.join(libdir, "libstdc++.a"), "/opt/puppetlabs/puppet/lib/libstdc++.a"
     pkg.install_file File.join(libdir, "libgcc_s.a"), "/opt/puppetlabs/puppet/lib/libgcc_s.a"
   elsif platform.is_windows?
-    lib_type = platform.architecture == "x64" ? "seh" : "sjlj"
-    pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:bindir]}/libgcc_s_#{lib_type}-1.dll"
-    pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:bindir]}/libstdc++-6.dll"
-    pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:bindir]}/libwinpthread-1.dll"
+    #lib_type = platform.architecture == "x64" ? "seh" : "sjlj"
+    #pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:bindir]}/libgcc_s_#{lib_type}-1.dll"
+    #pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:bindir]}/libstdc++-6.dll"
+    #pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:bindir]}/libwinpthread-1.dll"
 
-    # Curl is dynamically linking against zlib, so we need to include this file until we
-    # update curl to statically link against zlib
-    pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:bindir]}/zlib1.dll"
+    ## Curl is dynamically linking against zlib, so we need to include this file until we
+    ## update curl to statically link against zlib
+    #pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:bindir]}/zlib1.dll"
   else
     pkg.install_file File.join(libdir, "libstdc++.so.6.0.18"), "/opt/puppetlabs/puppet/lib/libstdc++.so.6.0.18"
     pkg.install_file File.join(libdir, "libgcc_s.so.1"), "/opt/puppetlabs/puppet/lib/libgcc_s.so.1"

@@ -1,7 +1,7 @@
 component "rubygem-win32-dir" do |pkg, settings, platform|
   pkg.version "0.4.9"
   pkg.md5sum "df14aa01bd6011f4b6332a05e15b7fb8"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/win32-dir-#{pkg.get_version}.gem"
+  #pkg.url "http://buildsources.delivery.puppetlabs.net/win32-dir-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -15,7 +15,7 @@ component "rubygem-win32-dir" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
-  pkg.install do
-    ["#{settings[:gem_install]} win32-dir-#{pkg.get_version}.gem"]
-  end
+  #pkg.install do
+  #  ["#{settings[:gem_install]} win32-dir-#{pkg.get_version}.gem"]
+  #end
 end

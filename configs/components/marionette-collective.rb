@@ -1,5 +1,5 @@
 component "marionette-collective" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/marionette-collective.json")
+  #pkg.load_from_json("configs/components/marionette-collective.json")
 
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
@@ -101,25 +101,25 @@ component "marionette-collective" do |pkg, settings, platform|
     extra_flags = "--no-service-files"
   end
 
-  pkg.install do
-    ["#{settings[:host_ruby]} install.rb \
-        --ruby=#{File.join(settings[:bindir], 'ruby')} \
-        --bindir=#{settings[:bindir]} \
-        --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} \
-        --sitelibdir=#{settings[:ruby_vendordir]} \
-        --quick \
-        --sbindir=#{settings[:bindir]} \
-        --plugindir=#{File.join(settings[:install_root], 'mcollective', 'plugins')} \
-        #{extra_flags}"]
-  end
+  #pkg.install do
+  #  ["#{settings[:host_ruby]} install.rb \
+  #      --ruby=#{File.join(settings[:bindir], 'ruby')} \
+  #      --bindir=#{settings[:bindir]} \
+  #      --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} \
+  #      --sitelibdir=#{settings[:ruby_vendordir]} \
+  #      --quick \
+  #      --sbindir=#{settings[:bindir]} \
+  #      --plugindir=#{File.join(settings[:install_root], 'mcollective', 'plugins')} \
+  #      #{extra_flags}"]
+  #end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
   pkg.directory File.join(settings[:install_root], 'mcollective')
   pkg.directory File.join(settings[:install_root], 'mcollective', 'plugins')
 
   # Bring in the client.cfg and server.cfg from ext/aio.
-  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
-  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
+  #pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
+  #pkg.install_file "ext/aio/common/server.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
 
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')

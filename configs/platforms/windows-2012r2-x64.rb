@@ -10,7 +10,8 @@ platform "windows-2012r2-x64" do |plat|
 
   # We don't want to install any packages from the chocolatey repo by accident
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe sources remove -name chocolatey"
-  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y mingw-w64 -version 5.2.0 -debug"
+  #plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y mingw-w64 -version 5.2.0 -debug"
+  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y Wix310 -version 3.10.2 -debug"
 
   plat.install_build_dependencies_with "C:/ProgramData/chocolatey/bin/choco.exe install -y"
 
@@ -18,6 +19,4 @@ platform "windows-2012r2-x64" do |plat|
   plat.patch "TMP=/var/tmp /usr/bin/patch.exe --binary"
 
   plat.platform_triple "x86_64-unknown-mingw32"
-
-  plat.package_type "nuget"
 end

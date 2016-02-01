@@ -1,7 +1,7 @@
 component "rubygem-win32-security" do |pkg, settings, platform|
   pkg.version "0.2.5"
   pkg.md5sum "97c4b971ea19ca48cea7dec1d21d506a"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/win32-security-#{pkg.get_version}.gem"
+  #pkg.url "http://buildsources.delivery.puppetlabs.net/win32-security-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -15,7 +15,7 @@ component "rubygem-win32-security" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
-  pkg.install do
-    ["#{settings[:gem_install]} win32-security-#{pkg.get_version}.gem"]
-  end
+  #pkg.install do
+  #  ["#{settings[:gem_install]} win32-security-#{pkg.get_version}.gem"]
+  #end
 end
