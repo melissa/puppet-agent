@@ -292,4 +292,8 @@ project "puppet-agent" do |proj|
   # rewritten as
   # http://buildsources.delivery.puppetlabs.net/openssl-1.0.0r.tar.gz
   proj.register_rewrite_rule 'http', 'http://buildsources.delivery.puppetlabs.net'
+
+  # Here we set up metrics
+  proj.environment 'VANAGON_STATSD_HOST', '10.32.162.156'
+  proj.environment 'VANAGON_STATSD_PORT', '8125'
 end
