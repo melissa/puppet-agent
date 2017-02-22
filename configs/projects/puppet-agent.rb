@@ -184,6 +184,7 @@ project "puppet-agent" do |proj|
     proj.setting(:cflags, "#{proj.cppflags}")
     proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
+    proj.environment "PATH", "$$PATH:#{proj.gcc_bindir}"
   end
 
   if platform.is_osx?

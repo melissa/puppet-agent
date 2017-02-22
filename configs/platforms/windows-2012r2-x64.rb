@@ -9,6 +9,7 @@ platform "windows-2012r2-x64" do |plat|
   plat.add_build_repository "http://nexus.delivery.puppetlabs.net/service/local/nuget/nuget-pl-build-tools/"
 
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y GnuWin"
+  plat.environment "PATH", "$$PATH:/cygdrive/c/GnuWin/bin"
 
   # We don't want to install any packages from the chocolatey repo by accident
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe sources remove -name chocolatey"
