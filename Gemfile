@@ -11,7 +11,7 @@ def location_for(place)
 end
 
 gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || '0.11.3')
-gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '0.4.3')
+gem 'packaging', :git => 'git@github.com:melissa/packaging.git', :branch => 'ticket/master/RE-8726-allow-ship-to-nonfinal-repo'
 gem 'rake'
 gem 'json'
 gem 'rubocop', "~> 0.34.2"
